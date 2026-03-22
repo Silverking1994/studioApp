@@ -1,12 +1,72 @@
 <div class="account-page">
 
-  <h2 id="account-title">My Account</h2>
+  <!-- HEADER -->
+  <div class="account-header card">
+    <h1 id="accountTitle">My Account</h1>
+    <p id="accountSubtitle">Manage your profile, settings and activity</p>
+  </div>
 
-  <div id="profile-container"></div>
+  <!-- PROFILE SECTION -->
+  <div id="profileSection"></div>
 
-  <div class="account-actions">
-    <button id="editBtn">Edit Profile</button>
-    <button id="saveBtn">Save</button>
+  <!-- QUICK ACTIONS -->
+  <div class="account-actions-grid card">
+
+    <button id="editProfileBtn">
+      <i class="fas fa-user-edit"></i>
+      Edit Profile
+    </button>
+
+    <button id="securityBtn">
+      <i class="fas fa-lock"></i>
+      Security
+    </button>
+
+    <button id="preferencesBtn">
+      <i class="fas fa-sliders-h"></i>
+      Preferences
+    </button>
+
+    <button id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i>
+      Logout
+    </button>
+
+  </div>
+
+  <!-- DETAILS SECTION -->
+  <div class="account-details card">
+
+    <h3>Account Details</h3>
+
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <label>Name</label>
+        <input id="nameInput" type="text" />
+      </div>
+
+      <div class="detail-item">
+        <label>Email</label>
+        <input id="emailInput" type="text" disabled />
+      </div>
+
+      <div class="detail-item">
+        <label>Location</label>
+        <input id="locationInput" type="text" />
+      </div>
+
+      <div class="detail-item">
+        <label>Website</label>
+        <input id="websiteInput" type="text" />
+      </div>
+
+    </div>
+
+    <button id="saveBtn" class="primary-btn">
+      Save Changes
+    </button>
+
   </div>
 
 </div>
