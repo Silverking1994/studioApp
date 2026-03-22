@@ -1,104 +1,97 @@
 /* =====================================================
-   TRACKING SERVICE MODULE
-   (Standalone + Plugin Compatible)
+   TRACKING SERVICE MODULE (CLEAN VERSION)
 ===================================================== */
 
 (function(){
 
   /* ===============================
-     MOCK TRACKING DATABASE
+     MOCK DATABASE
   =============================== */
 
   const mockDatabase = {
-    "ABC123": { status: "In Transit", found: true },
-    "XYZ789": { status: "Delivered", found: true },
-    "TEST001": { status: "Processing", found: true }
+    "ABC123": { status: "In Transit" },
+    "XYZ789": { status: "Delivered" },
+    "TEST001": { status: "Processing" }
   };
 
   /* ===============================
-     CORE TRACK FUNCTION
+     CORE LOGIC (SINGLE SOURCE 🔥)
   =============================== */
 
-  function trackPackage(trackingNumber){
+  async function trackPackage(trackingNumber){
 
-    return new Promise((resolve)=>{
+    await new Promise(r => setTimeout(r, 1000));
 
-      setTimeout(()=>{
+    const data = mockDatabase[trackingNumber];
 
-        const data = mockDatabase[trackingNumber];
+    if(data){
+      return {
+        trackingNumber,
+        status: data.status,
+        found: true
+      };
+    }
 
-        if(data){
-          resolve({
-            trackingNumber,
-            status: data.status,
-            found: true
-          });
-        } else {
-          resolve({
-            trackingNumber,
-            found: false
-          });
-        }
-
-      }, 1000);
-
-    });
-
+    return {
+      trackingNumber,
+      found: false
+    };
   }
 
   /* ===============================
-     STANDALONE HTML MODE
+     UI HANDLER (EXTERNAL PAGE)
   =============================== */
 
-  function initStandalone(){
+  function initUI(){
 
     const input = document.getElementById("trackingId");
-    const btn = document.getElementById("trackBtn");
+    const btn = document.querySelector("button");
     const result = document.getElementById("result");
 
     if(!input || !btn || !result) return;
 
-    btn.addEventListener("click", async ()=>{
+    btn.onclick = async ()=>{
 
-      const id = input.value.trim();
-      if(!id) return;
+      const value = input.value.trim();
+
+      if(!value){
+        result.innerText = "Enter a tracking ID";
+        return;
+      }
 
       result.innerText = "Tracking...";
 
-      const response = await trackPackage(id);
+      const res = await trackPackage(value);
 
-      if(response.found){
-        result.innerText = `
-Tracking #: ${response.trackingNumber}
-Status: ${response.status}
-        `;
+      if(res.found){
+        result.innerText =
+`Tracking #: ${res.trackingNumber}
+Status: ${res.status}`;
       } else {
         result.innerText = "Shipment not found";
       }
 
-    });
+    };
 
   }
 
   /* ===============================
-     CREATIVE PLUGIN MODE
+     PLUGIN REGISTRATION (FIXED 🔥)
   =============================== */
 
-  function initPluginMode(){
+  function registerPlugin(){
 
     if(!window.Creativia) return;
 
-    window.Creativia.registerPlugin({
+    Creativia.registerPlugin({
 
-      name: "trackingService",
-
-      init(){
-        console.log("Tracking Service Plugin Loaded");
-      },
+      name: "tracking",
 
       modules: {
 
-        trackPackage
+        tracking: {
+          track: trackPackage
+        }
 
       }
 
@@ -107,13 +100,11 @@ Status: ${response.status}
   }
 
   /* ===============================
-     AUTO DETECT MODE
+     AUTO INIT
   =============================== */
 
-  if(document.getElementById("trackingId")){
-    initStandalone();
-  }
+  document.addEventListener("DOMContentLoaded", initUI);
 
-  initPluginMode();
+  registerPlugin();
 
 })();
