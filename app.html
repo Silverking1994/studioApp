@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+
+<title>Email Template Editor</title>
+<style>
+
+:root{
+  --brand:#00f0ff;
+  --neon:#6c5cff;
+  --bg-dark:#0b0f16;
+  --glass:rgba(255,255,255,0.05);
+}
+
+
+/* ===============================
+   APP-LIKE STYLING
+================================= */
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background:#0f1115;
+  display:flex;
+  height:100vh;
+  
+  color: #fff;
+}
+
+
+/* LINKS */
+a {
+  text-decoration: none;
+  color: #00ff9d;
+  transition: 0.2s;
+}
+a:hover {
+  color: #00f5ff;
+}
+
+
+/* HEADINGS */
+h2, h3, h4 {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+/* BUTTONS */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 25px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+button:hover {
+  opacity: 0.9;
+}
+.save-btn {
+  background: linear-gradient(90deg, #00f5ff, #00ff9d);
+  color: #0b0f16;
+  margin-top: 25px;
+  width: 100%;
+  font-size: 16px;
+}
+
+
+
+.sidebar { width:300px;background:#1a1d24;padding:20px;border-right:1px solid #2a2f3a;overflow-y:auto; }
+.sidebar h2 { margin:15px 0 10px;font-size:14px;color:#aaa; }
+.sidebar button { width:100%;margin-bottom:8px;padding:10px;border:none;background:#2d3340;color:#fff;cursor:pointer;border-radius:6px;font-size:13px; }
+.sidebar button:hover { background:#3b4252; }
+textarea { width:100%;height:120px;background:#0f1115;color:#fff;border:1px solid #333;border-radius:6px;padding:8px;font-size:12px; }
+.app { flex:1;display:flex;flex-direction:column; }
+.toolbar { padding:10px;background:#1a1d24;border-bottom:1px solid #2a2f3a; }
+.toolbar button { margin-right:10px;padding:8px 12px;border:none;background:#2d3340;color:white;border-radius:6px;cursor:pointer; }
+.toolbar button:hover { background:#3b4252; }
+#main { flex:1;background:#f4f4f4;padding:20px;overflow:auto; }
+.app-view { max-width:600px;margin:auto;background:white;color:#000;padding:20px;border-radius:8px; }
+/* ===============================
+   APP-LIKE SCROLLABLE SETTINGS
+================================= */
+
+/* WRAPPER FOR CENTERING */
+#app-view {
+  max-width: 900px;        /* limits the width on large screens */
+  margin: 0 auto;          /* center horizontally */
+  padding: 20px 15px;      /* padding on all devices */
+  box-sizing: border-box;
+}
+
+app-view{
+  display:flex;
+  justify-content:center;
+  width:100%;
+}
+
+
+
+
+
+/* POSTS GRID LAYOUT */
+
+/* POSTS GRID LAYOUT */
+:root{
+  --brand:#00f0ff;
+  --neon:#6c5cff;
+  --bg-dark:#0b0f16;
+  --glass:rgba(255,255,255,0.05);
+}
+
+/* ===============================
+   MAIN PAGE CONTENT CONTAINER
+================================= */
+
+.app-view{
+  display:flex;
+  justify-content:center;
+  width:100%;
+  padding:10px;
+}
+
+/* wrapper for page content */
+.page-container{
+  width:100%;
+  max-width:1100px; /* controls page width on desktop */
+  margin:0 auto;
+  padding:10px;
+}
+
+
+app-view{
+  display:flex;
+  justify-content:center;
+  width:100%;
+}
+
+
+
+
+/* ===============================
+   HEAD STAT CARD WIDTH CONTROL
+================================= */
+
+.headstat-card{
+  max-width:700px;
+  margin:0 auto; /* center it */
+  width:100%;
+}
+.page-head-wrap{
+margin:10px auto 0 auto;
+}
+
+
+
+.media-grid{
+  max-width:1000px;
+  margin:0 auto;
+}
+
+
+
+/* ===============================
+   SIDEBAR SIDE NAV BUTTONS
+================================= */
+#sideNav-container {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  gap: 8px;               /* spacing between buttons */
+  margin-top: 5px;       /* separate from main nav */
+}
+
+#sideNav-container button {
+  display: flex;
+  align-items: center;
+  gap: 12px;                /* space between icon and label */
+  padding: 10px 16px;
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+#sideNav-container button i {
+  font-size: 16px;
+  min-width: 20px;          /* align icons vertically */
+  text-align: center;
+}
+
+/* Hover & Active States */
+#sideNav-container button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+#sideNav-container button.active {
+  background-color: #6c63ff; /* accent color */
+  color: #fff;
+}
+
+/* Optional: small icon-only collapse style */
+#sidebar.collapsed #sideNav-container button span {
+  display: none;
+}
+
+
+/* ===============================
+   SIDEBAR WRAP SCROLL
+================================= */
+.sidebar {
+  width: 250px; /* adjust as needed */
+  height: 100vh; /* full viewport height */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* hide native overflow */
+}
+
+.sidebar-inner-wrap.scrollable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* enable vertical scrolling */
+  scroll-behavior: smooth;
+
+  /* ensures last item can fully scroll into view */
+  scroll-padding-bottom: 100px; 
+  padding-top: 16px;
+  margin-bottom:35px;
+}
+
+/* Optional: subtle scrollbar styling */
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===============================
+   SIDEBAR SECTIONS
+================================= */
+.sidebar-section {
+  margin-bottom: 15px; /* spacing between sections */
+}
+
+
+@keyframes borderMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.8));
+}
+
+/* Content */
+.content{
+  position:relative;
+  z-index:2;
+}
+
+/* =========================
+   GLOBAL SLIDE ALERT
+========================= */
+
+.global-alert{
+  position:fixed;
+  top:-100px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:300px;
+  max-width:90%;
+  padding:14px 20px;
+  border-radius:12px;
+  backdrop-filter:blur(15px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+  z-index:10000;
+  transition:top 0.4s ease, opacity 0.3s ease;
+  opacity:0;
+}
+
+.global-alert.show{
+  top:20px;
+  opacity:1;
+}
+
+.alert-content{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:500;
+  font-size:14px;
+}
+
+/* TYPES */
+.global-alert.success{
+  background:linear-gradient(90deg,#00ff9d,#00f5ff);
+  color:#000;
+}
+
+.global-alert.error{
+  background:linear-gradient(90deg,#ff4d4d,#ff0033);
+  color:white;
+}
+
+.global-alert.warning{
+  background:linear-gradient(90deg,#ffaa00,#ff7700);
+  color:black;
+}
+
+.global-alert.info{
+  background:linear-gradient(90deg,#0077ff,#00c3ff);
+  color:white;
+}
+
+
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+
+
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .settings-grid { grid-template-columns: 1fr; }
+  .headstat-profile { padding-top: 40px; }
+  .profile-photo { width: 100px; height: 100px; }
+  .avatar-preview { width: 60px; height: 60px; }
+}
+@media (max-width: 480px) {
+  .save-btn { font-size: 14px; padding: 10px 18px; }
+  .profile-info h2 { font-size: 18px; }
+  .profile-info p { font-size: 13px; }
+}
+
+
+
+
+
+
+/* ===============================
+   SIDEBAR SIDE NAV BUTTONS
+================================= */
+#sideNav-container {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  gap: 8px;               /* spacing between buttons */
+  margin-top: 5px;       /* separate from main nav */
+}
+
+#sideNav-container button {
+  display: flex;
+  align-items: center;
+  gap: 12px;                /* space between icon and label */
+  padding: 10px 16px;
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+}
+
+#sideNav-container button i {
+  font-size: 16px;
+  min-width: 20px;          /* align icons vertically */
+  text-align: center;
+}
+
+/* Hover & Active States */
+#sideNav-container button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+#sideNav-container button.active {
+  background-color: #6c63ff; /* accent color */
+  color: #fff;
+}
+
+/* Optional: small icon-only collapse style */
+#sidebar.collapsed #sideNav-container button span {
+  display: none;
+}
+
+
+/* ===============================
+   SIDEBAR WRAP SCROLL
+================================= */
+.sidebar {
+  width: 250px; /* adjust as needed */
+  height: 100vh; /* full viewport height */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* hide native overflow */
+}
+
+.sidebar-inner-wrap.scrollable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* enable vertical scrolling */
+  scroll-behavior: smooth;
+
+  /* ensures last item can fully scroll into view */
+  scroll-padding-bottom: 100px; 
+  padding-top: 16px;
+  margin-bottom:35px;
+}
+
+/* Optional: subtle scrollbar styling */
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.sidebar-inner-wrap.scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===============================
+   SIDEBAR SECTIONS
+================================= */
+.sidebar-section {
+  margin-bottom: 15px; /* spacing between sections */
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+
+<div class="nav sidebar-section" id="nav-container"></div>
+  
+</div>
+
+<div class="app">
+  <div class="toolbar header">
+   
+<button class="collapse-btn" id="collapseBtn" onclick="toggleCollapse()">
+<i class="fas fa-angle-left"></i>
+</button>
+
+   
+  </div>
+
+  <div id="main"class=" main">
+    <div class="app-view" id="emailContent"></div>
+  </div>
+</div>
+
+<script>
+
+
+function toggleCollapse(){
+
+  if(window.innerWidth <= 768){
+    document.getElementById("sidebar").classList.toggle("open");
+  }else{
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  }
+
+}
+
+
+</script>
+
+</body>
+</html>
