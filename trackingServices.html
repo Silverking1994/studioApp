@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tracking Services</title>
+
+  <!-- Optional styling -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #result {
+      background: #222;
+      padding: 15px;
+      margin-top: 20px;
+      min-height: 50px;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h2>Tracking Service</h2>
+  <h2>📦 Tracking Service</h2>
 
   <input id="trackingId" placeholder="Enter Tracking ID" />
-  <button onclick="track()">Track Package</button>
+  <button id="trackBtn">Track Package</button>
 
   <h3>Tracking Result</h3>
   <pre id="result"></pre>
 
+  <!-- Load script from SAME directory -->
   <script src="trackingService.js"></script>
 
 </body>
