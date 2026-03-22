@@ -1,68 +1,83 @@
-(function () {
+window.CreativiaPage = {
 
-  function waitForElement(selector, timeout = 2000) {
-    return new Promise((resolve, reject) => {
-      const interval = 50;
-      let elapsed = 0;
+  state: {
+    member: null,
+    editing: false
+  },
 
-      const timer = setInterval(() => {
-        const el = document.querySelector(selector);
+  onLoad({ store, components }) {
 
-        if (el) {
-          clearInterval(timer);
-          resolve(el);
-        }
+    console.log("Account page loaded");
 
-        elapsed += interval;
+    this.state.member = store.user || {
+      name: "Guest",
+      email: "guest@creativia.com"
+    };
 
-        if (elapsed >= timeout) {
-          clearInterval(timer);
-          reject("Element not found: " + selector);
-        }
-      }, interval);
-    });
-  }
+    this.renderProfile();
+    this.bindEvents();
+  },
 
-  window.CreativiaPage = {
+  setPageData(data){
+    console.log("Page data received:", data);
+  },
 
-    async onLoad() {
-      console.log("Account Page Loaded");
+  renderProfile() {
+    const container = document.getElementById("profile-container");
+    if (!container) return;
 
-      const user = JSON.parse(localStorage.getItem("user"));
+    const m = this.state.member;
 
-      try {
-        const nameEl = await waitForElement("#user-name");
-        const emailEl = await waitForElement("#user-email");
-        const btn = await waitForElement("#edit-profile");
+    container.innerHTML = `
+      <div class="profile-box">
 
-        if (user) {
-          nameEl.innerText = user.name || "";
-          emailEl.innerText = user.email || "";
-        }
+        <p><strong>Name:</strong> ${m.name}</p>
+        <p><strong>Email:</strong> ${m.email}</p>
 
-        btn.onclick = () => {
-          const newName = prompt("Update your name:", user?.name || "");
+        <input id="nameInput" value="${m.name}" style="display:none;" />
+        <input id="emailInput" value="${m.email}" style="display:none;" />
 
-          if (newName) {
-            user.name = newName;
+      </div>
+    `;
+  },
 
-            localStorage.setItem("user", JSON.stringify(user));
+  bindEvents() {
 
-            nameEl.innerText = newName;
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
 
-            alert("Profile updated!");
-          }
-        };
+    if (editBtn) {
+      editBtn.onclick = () => {
+        this.state.editing = true;
 
-      } catch (err) {
-        console.warn("Account page binding failed:", err);
-      }
-    },
-
-    onDestroy() {
-      console.log("Account Page Destroyed");
+        document.getElementById("nameInput").style.display = "block";
+        document.getElementById("emailInput").style.display = "block";
+      };
     }
 
-  };
+    if (saveBtn) {
+      saveBtn.onclick = () => {
 
-})();
+        const name = document.getElementById("nameInput").value;
+        const email = document.getElementById("emailInput").value;
+
+        this.state.member.name = name;
+        this.state.member.email = email;
+
+        // Notify parent (Wix or main app)
+        window.parent.postMessage({
+          type: "PROFILE_UPDATE",
+          payload: this.state.member
+        }, "*");
+
+        alert("Profile updated!");
+      };
+    }
+
+  },
+
+  onDestroy() {
+    console.log("Account page destroyed");
+  }
+
+};
