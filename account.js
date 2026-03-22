@@ -1,15 +1,10 @@
-/* =========================
-   ACCOUNT PAGE SCRIPT
-========================= */
 (function () {
-  console.log("Account Script Loaded");
 
   window.CreativiaPage = {
 
     onLoad() {
-      console.log("Account Page onLoad");
+      console.log("Account Page Loaded");
 
-      // Access user from localStorage
       const user = JSON.parse(localStorage.getItem("user"));
 
       const nameEl = document.getElementById("user-name");
@@ -17,21 +12,21 @@
 
       if (user) {
         if (nameEl) nameEl.innerText = user.name;
-        if (emailEl) emailEl.innerText = user.email || "No email";
+        if (emailEl) emailEl.innerText = user.email;
       }
 
-      // Edit button
-      const editBtn = document.getElementById("edit-profile");
+      const btn = document.getElementById("edit-profile");
 
-      if (editBtn) {
-        editBtn.onclick = () => {
-          const newName = prompt("Enter new name:", user.name);
+      if (btn) {
+        btn.onclick = () => {
+          const newName = prompt("Update your name:", user.name);
 
           if (newName) {
             user.name = newName;
+
             localStorage.setItem("user", JSON.stringify(user));
 
-            nameEl.innerText = newName;
+            if (nameEl) nameEl.innerText = newName;
 
             alert("Profile updated!");
           }
