@@ -1,124 +1,79 @@
-window.CreativiaPage = {
+(function(){
 
-  state: {
-    user: null
-  },
+/* =========================
+   PROFILE RENDER
+========================= */
+function renderProfile(user){
 
-  /* =========================
-     INIT
-  ========================= */
-  onLoad({ store }) {
+  return `
+    <div class="card">
 
-    console.log("Account page loaded");
+      <div style="text-align:center;">
+        <img src="${user.photo || 'https://via.placeholder.com/100'}"
+             style="width:100px;height:100px;border-radius:50%;object-fit:cover;" />
 
-    // Get user from store (Wix user injected upstream)
-    this.state.user = store.user || null;
+        <h2>${user.name || "User"}</h2>
+        <p>${user.email || ""}</p>
+      </div>
 
-    if (!this.state.user) {
-      console.warn("No user data found");
-      return;
-    }
+      <hr style="opacity:0.2;margin:20px 0;">
 
-    this.renderProfile();
-    this.populateFields();
-    this.bindEvents();
-  },
+      <p><strong>Location:</strong> ${user.location || "—"}</p>
+      <p><strong>Membership:</strong> ${user.membership || "Standard"}</p>
 
-  /* =========================
-     PROFILE RENDER
-  ========================= */
-  renderProfile() {
-    const container = document.getElementById("profileSection");
-    if (!container) return;
+      <div style="margin-top:15px;">
+        <button onclick="alert('Edit Profile')">Edit Profile</button>
+        <button onclick="alert('Settings')">Settings</button>
+      </div>
 
-    container.innerHTML = renderProfileHead(this.state.user);
-  },
+    </div>
+  `;
+}
 
-  /* =========================
-     FILL FORM FIELDS
-  ========================= */
-  populateFields() {
-    const u = this.state.user;
+/* =========================
+   STATS RENDER
+========================= */
+function renderStats(user){
 
-    const nameInput = document.getElementById("nameInput");
-    const emailInput = document.getElementById("emailInput");
-    const locationInput = document.getElementById("locationInput");
-    const websiteInput = document.getElementById("websiteInput");
+  return `
+    <div class="card">
+      <h3>Stats</h3>
 
-    if (nameInput) nameInput.value = u.name || "";
-    if (emailInput) emailInput.value = u.email || "";
-    if (locationInput) locationInput.value = u.location || "";
-    if (websiteInput) websiteInput.value = u.website || "";
-  },
+      <div style="display:flex;gap:20px;justify-content:space-around;">
+        <div>
+          <strong>${user.posts || 0}</strong>
+          <div>Posts</div>
+        </div>
 
-  /* =========================
-     EVENT HANDLERS
-  ========================= */
-  bindEvents() {
+        <div>
+          <strong>${user.followers || 0}</strong>
+          <div>Followers</div>
+        </div>
 
-    const saveBtn = document.getElementById("saveBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const editBtn = document.getElementById("editProfileBtn");
+        <div>
+          <strong>${user.following || 0}</strong>
+          <div>Following</div>
+        </div>
+      </div>
 
-    /* SAVE PROFILE */
-    if (saveBtn) {
-      saveBtn.onclick = () => {
+    </div>
+  `;
+}
 
-        const updatedUser = {
-          ...this.state.user,
-          name: document.getElementById("nameInput").value,
-          location: document.getElementById("locationInput").value,
-          website: document.getElementById("websiteInput").value
-        };
+/* =========================
+   MAIN ENTRY
+========================= */
+window.renderAccountPage = function(state){
 
-        this.state.user = updatedUser;
+  const user = state.user || {};
 
-        // Send to parent (Wix / main app)
-        window.parent.postMessage({
-          type: "PROFILE_UPDATE",
-          payload: updatedUser
-        }, "*");
+  const root = document.getElementById("account-root");
 
-        alert("Profile updated successfully ✅");
-      };
-    }
-
-    /* LOGOUT */
-    if (logoutBtn) {
-      logoutBtn.onclick = () => {
-        window.parent.postMessage({
-          type: "LOGOUT"
-        }, "*");
-      };
-    }
-
-    /* EDIT PROFILE (optional UI toggle hook) */
-    if (editBtn) {
-      editBtn.onclick = () => {
-        document.getElementById("nameInput").focus();
-      };
-    }
-
-    /* OTHER ACTIONS */
-    document.getElementById("securityBtn")?.addEventListener("click", ()=>{
-      alert("Security settings coming soon");
-    });
-
-    document.getElementById("preferencesBtn")?.addEventListener("click", ()=>{
-      alert("Preferences coming soon");
-    });
-
-  },
-
-  /* =========================
-     OPTIONAL PAGE DATA
-  ========================= */
-  setPageData(data){
-    console.log("Account page data:", data);
-  },
-
-  onDestroy(){
-    console.log("Account page destroyed");
-  }
+  root.innerHTML = `
+    ${renderProfile(user)}
+    ${renderStats(user)}
+  `;
 
 };
+
+})();
