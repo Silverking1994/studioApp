@@ -763,3 +763,208 @@ function saveSettingsDynamic(){
 }
 
 
+
+
+function handleControls(section){
+
+  buildFilters(section.filters || []);
+
+  window.controlTargets = section.targets || [];
+
+}
+
+
+
+function handleCards(section){
+
+  const gridId = section.id;
+
+  if(gridId){
+    renderCards(gridId, section.items || []);
+  }
+
+}
+
+
+
+
+function initMediaSection(section){
+
+  const sectionId = section.id;
+  if(!sectionId) return;
+
+  const gridId = `mediaGrid-${sectionId}`;
+  const filterId = `mediaFilters-${sectionId}`;
+  const searchId = `mediaSearch-${sectionId}`;
+
+  let currentFilter = "all";
+  let currentSearch = "";
+
+  const allDrops = section.items || [];
+
+  /* INITIAL RENDER */
+
+  renderMediaGrid(gridId, allDrops);
+
+  /* FILTER BUTTONS */
+
+  const filterContainer = document.getElementById(filterId);
+
+  if(filterContainer){
+
+    const buttons = filterContainer.querySelectorAll(".filter-btn");
+
+    buttons.forEach(btn => {
+
+      btn.onclick = () => {
+
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        currentFilter = btn.innerText.toLowerCase();
+
+        applyFilters();
+
+      };
+
+    });
+
+  }
+
+  /* SEARCH */
+
+  const searchInput = document.getElementById(searchId);
+
+  if(searchInput){
+
+    searchInput.oninput = e => {
+
+      currentSearch = e.target.value.toLowerCase().trim();
+
+      applyFilters();
+
+    };
+
+  }
+
+  /* FILTER ENGINE */
+
+  function applyFilters(){
+
+    let filtered = [...allDrops];
+
+    if(currentFilter !== "all"){
+
+      const normalized = currentFilter.endsWith("s")
+        ? currentFilter.slice(0,-1)
+        : currentFilter;
+
+      filtered = filtered.filter(item =>
+        (item.type || "").toLowerCase() === normalized
+      );
+
+    }
+
+    if(currentSearch){
+
+      filtered = filtered.filter(item => {
+
+        const title = (item.title || "").toLowerCase();
+        const desc = (item.description || "").toLowerCase();
+        const type = (item.type || "").toLowerCase();
+
+        return (
+          title.includes(currentSearch) ||
+          desc.includes(currentSearch) ||
+          type.includes(currentSearch)
+        );
+
+      });
+
+    }
+
+    renderMediaGrid(gridId, filtered);
+
+  }
+
+}
+
+
+
+
+/* =====================================================
+   CARD RENDERER (RESPONSIVE GRID)
+===================================================== */
+function renderCards(gridId, items){
+
+  const grid = document.getElementById(gridId);
+  if(!grid) return;
+
+  if(!items || items.length===0){
+    grid.innerHTML="<p>No items found</p>";
+    return;
+  }
+
+  grid.innerHTML = items.map(item => `
+    <div class="card" onclick='openLightbox("itemDetails", ${JSON.stringify(item)})'>
+
+      <div class="card-bg" style="background-image:url('${item.image}')"></div>
+      <div class="overlay"></div>
+
+      ${item.type ? `<div class="ribbon">${item.type}</div>` : ""}
+
+      <div class="content">
+        <div class="title">${item.title}</div>
+        <div class="desc">${item.description || ""}</div>
+        ${item.status ? `<div class="status ${item.status}">${item.status}</div>` : ""}
+      </div>
+
+    </div>
+  `).join("");
+
+}
+
+
+/* =====================================================
+   🔟 MODAL SYSTEM
+===================================================== */
+
+function openModal(id) {
+  const pageData = StaticPageData[currentPage];
+  if (!pageData) return;
+  const item = pageData.items.find(i => i._id === id);
+  if (!item) return;
+
+  document.getElementById("modalTitle").innerText = item.title;
+  document.getElementById("modalDesc").innerText = item.description;
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+}
+
+
+
+
+
+/* =====================================================
+   🔍 GLOBAL SEARCH LISTENER (AUTO WORKS)
+===================================================== */
+
+document.addEventListener("input", function(e){
+
+  if(e.target && e.target.id === "searchInput"){
+
+    currentSearchTerm = e.target.value.toLowerCase().trim();
+    applyCombinedFilters();
+
+  }
+
+});
+
+
+
+
+
+
