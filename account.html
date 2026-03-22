@@ -1,72 +1,100 @@
-<div class="account-page">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- HEADER -->
-  <div class="account-header card">
-    <h1 id="accountTitle">My Account</h1>
-    <p id="accountSubtitle">Manage your profile, settings and activity</p>
-  </div>
+<title>Creativia Account</title>
 
-  <!-- PROFILE SECTION -->
-  <div id="profileSection"></div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-  <!-- QUICK ACTIONS -->
-  <div class="account-actions-grid card">
+<style>
+body{
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:#0b0f16;
+  color:#fff;
+}
 
-    <button id="editProfileBtn">
-      <i class="fas fa-user-edit"></i>
-      Edit Profile
-    </button>
+#app{
+  padding:20px;
+}
 
-    <button id="securityBtn">
-      <i class="fas fa-lock"></i>
-      Security
-    </button>
+.card{
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+}
 
-    <button id="preferencesBtn">
-      <i class="fas fa-sliders-h"></i>
-      Preferences
-    </button>
+button{
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
 
-    <button id="logoutBtn">
-      <i class="fas fa-sign-out-alt"></i>
-      Logout
-    </button>
+</head>
+<body>
 
-  </div>
-
-  <!-- DETAILS SECTION -->
-  <div class="account-details card">
-
-    <h3>Account Details</h3>
-
-    <div class="details-grid">
-
-      <div class="detail-item">
-        <label>Name</label>
-        <input id="nameInput" type="text" />
-      </div>
-
-      <div class="detail-item">
-        <label>Email</label>
-        <input id="emailInput" type="text" disabled />
-      </div>
-
-      <div class="detail-item">
-        <label>Location</label>
-        <input id="locationInput" type="text" />
-      </div>
-
-      <div class="detail-item">
-        <label>Website</label>
-        <input id="websiteInput" type="text" />
-      </div>
-
-    </div>
-
-    <button id="saveBtn" class="primary-btn">
-      Save Changes
-    </button>
-
-  </div>
-
+<div id="app">
+  <div id="loading">Waiting for data...</div>
+  <div id="account-root" style="display:none;"></div>
 </div>
+
+<script>
+/* =========================
+   GLOBAL STATE
+========================= */
+window.APP_STATE = {
+  user: null,
+  pageData: null
+};
+
+/* =========================
+   RENDER TRIGGER
+========================= */
+function initAccountPage(payload){
+  window.APP_STATE.user = payload.user || {};
+  window.APP_STATE.pageData = payload.pageData || {};
+
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("account-root").style.display = "block";
+
+  // Load external account script AFTER data is ready
+  loadScript(payload.scriptUrl || "./account.js");
+}
+
+/* =========================
+   LOAD SCRIPT DYNAMICALLY
+========================= */
+function loadScript(src){
+  const script = document.createElement("script");
+  script.src = src;
+  script.onload = () => {
+    console.log("account.js loaded");
+    if(window.renderAccountPage){
+      window.renderAccountPage(window.APP_STATE);
+    }
+  };
+  document.body.appendChild(script);
+}
+
+/* =========================
+   LISTEN FROM PARENT (WIX)
+========================= */
+window.addEventListener("message", (event) => {
+
+  if(event.data && event.data.type === "INIT_APP"){
+    console.log("INIT received", event.data.payload);
+
+    initAccountPage(event.data.payload);
+  }
+
+});
+
+</script>
+
+</body>
+</html>
