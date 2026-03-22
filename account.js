@@ -1,36 +1,61 @@
 (function () {
 
+  function waitForElement(selector, timeout = 2000) {
+    return new Promise((resolve, reject) => {
+      const interval = 50;
+      let elapsed = 0;
+
+      const timer = setInterval(() => {
+        const el = document.querySelector(selector);
+
+        if (el) {
+          clearInterval(timer);
+          resolve(el);
+        }
+
+        elapsed += interval;
+
+        if (elapsed >= timeout) {
+          clearInterval(timer);
+          reject("Element not found: " + selector);
+        }
+      }, interval);
+    });
+  }
+
   window.CreativiaPage = {
 
-    onLoad() {
+    async onLoad() {
       console.log("Account Page Loaded");
 
       const user = JSON.parse(localStorage.getItem("user"));
 
-      const nameEl = document.getElementById("user-name");
-      const emailEl = document.getElementById("user-email");
+      try {
+        const nameEl = await waitForElement("#user-name");
+        const emailEl = await waitForElement("#user-email");
+        const btn = await waitForElement("#edit-profile");
 
-      if (user) {
-        if (nameEl) nameEl.innerText = user.name;
-        if (emailEl) emailEl.innerText = user.email;
-      }
+        if (user) {
+          nameEl.innerText = user.name || "";
+          emailEl.innerText = user.email || "";
+        }
 
-      const btn = document.getElementById("edit-profile");
-
-      if (btn) {
         btn.onclick = () => {
-          const newName = prompt("Update your name:", user.name);
+          const newName = prompt("Update your name:", user?.name || "");
 
           if (newName) {
             user.name = newName;
 
             localStorage.setItem("user", JSON.stringify(user));
 
-            if (nameEl) nameEl.innerText = newName;
+            nameEl.innerText = newName;
 
             alert("Profile updated!");
           }
         };
+
+      } catch (err) {
+        console.warn("Account page binding failed:", err);
       }
     },
 
