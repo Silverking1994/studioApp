@@ -1,5 +1,5 @@
 /* =====================================================
-   TRACKING SERVICE MODULE (CLEAN VERSION)
+   TRACKING SERVICE MODULE (FINAL CLEAN VERSION)
 ===================================================== */
 
 (function(){
@@ -39,18 +39,23 @@
   }
 
   /* ===============================
-     UI HANDLER (EXTERNAL PAGE)
+     UI HANDLER
   =============================== */
 
   function initUI(){
 
-    const input = document.getElementById("trackingId");
-    const btn = document.querySelector("button");
+    const input  = document.getElementById("trackingId");
+    const btn    = document.getElementById("trackBtn");
     const result = document.getElementById("result");
 
+    // ❌ Stop if elements not present
     if(!input || !btn || !result) return;
 
-    btn.onclick = async ()=>{
+    // 🔥 Prevent duplicate binding
+    if(btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+
+    btn.addEventListener("click", async ()=>{
 
       const value = input.value.trim();
 
@@ -61,22 +66,70 @@
 
       result.innerText = "Tracking...";
 
-      const res = await trackPackage(value);
+      try{
 
-      if(res.found){
-        result.innerText =
+        const res = await trackPackage(value);
+
+        if(res.found){
+          result.innerText =
 `Tracking #: ${res.trackingNumber}
 Status: ${res.status}`;
-      } else {
-        result.innerText = "Shipment not found";
+        } else {
+          result.innerText = "Shipment not found";
+        }
+
+      }catch(err){
+        console.error("Tracking error:", err);
+        result.innerText = "Error tracking package";
       }
 
-    };
+    });
 
   }
 
   /* ===============================
-     PLUGIN REGISTRATION (FIXED 🔥)
+     SAFE AUTO INIT (FOR DYNAMIC LOAD)
+  =============================== */
+
+  function waitForElementsAndInit(){
+
+    let attempts = 0;
+
+    const interval = setInterval(()=>{
+
+      const input  = document.getElementById("trackingId");
+      const btn    = document.getElementById("trackBtn");
+      const result = document.getElementById("result");
+
+      if(input && btn && result){
+        clearInterval(interval);
+        initUI();
+      }
+
+      // stop trying after ~5 seconds
+      if(attempts++ > 50){
+        clearInterval(interval);
+        console.warn("Tracking UI not found in DOM");
+      }
+
+    }, 100);
+
+  }
+
+  /* ===============================
+     EVENT-BASED INIT (BEST PRACTICE)
+  =============================== */
+
+  window.addEventListener("external:pageReady", (e)=>{
+
+    if(e.detail?.page === "trackingService"){
+      initUI();
+    }
+
+  });
+
+  /* ===============================
+     PLUGIN REGISTRATION (CREATIVIA)
   =============================== */
 
   function registerPlugin(){
@@ -85,14 +138,12 @@ Status: ${res.status}`;
 
     Creativia.registerPlugin({
 
-      name: "tracking",
+      name: "trackingService",
 
       modules: {
-
         tracking: {
           track: trackPackage
         }
-
       }
 
     });
@@ -100,250 +151,10 @@ Status: ${res.status}`;
   }
 
   /* ===============================
-     AUTO INIT
+     INIT SEQUENCE
   =============================== */
-/* =====================================================
-   TRACKING SERVICE MODULE (CLEAN VERSION)
-===================================================== */
-
-(function(){
-
-  /* ===============================
-     MOCK DATABASE
-  =============================== */
-
-  const mockDatabase = {
-    "ABC123": { status: "In Transit" },
-    "XYZ789": { status: "Delivered" },
-    "TEST001": { status: "Processing" }
-  };
-
-  /* ===============================
-     CORE LOGIC (SINGLE SOURCE 🔥)
-  =============================== */
-
-  async function trackPackage(trackingNumber){
-
-    await new Promise(r => setTimeout(r, 1000));
-
-    const data = mockDatabase[trackingNumber];
-
-    if(data){
-      return {
-        trackingNumber,
-        status: data.status,
-        found: true
-      };
-    }
-
-    return {
-      trackingNumber,
-      found: false
-    };
-  }
-
-  /* ===============================
-     UI HANDLER (EXTERNAL PAGE)
-  =============================== */
-
-  function initUI(){
-
-    const input = document.getElementById("trackingId");
-    const btn = document.querySelector("button");
-    const result = document.getElementById("result");
-
-    if(!input || !btn || !result) return;
-
-    btn.onclick = async ()=>{
-
-      const value = input.value.trim();
-
-      if(!value){
-        result.innerText = "Enter a tracking ID";
-        return;
-      }
-
-      result.innerText = "Tracking...";
-
-      const res = await trackPackage(value);
-
-      if(res.found){
-        result.innerText =
-`Tracking #: ${res.trackingNumber}
-Status: ${res.status}`;
-      } else {
-        result.innerText = "Shipment not found";
-      }
-
-    };
-
-  }
-
-  /* ===============================
-     PLUGIN REGISTRATION (FIXED 🔥)
-  =============================== */
-
-  function registerPlugin(){
-
-    if(!window.Creativia) return;
-
-    Creativia.registerPlugin({
-
-      name: "tracking",
-
-      modules: {
-
-        tracking: {
-          track: trackPackage
-        }
-
-      }
-
-    });
-
-  }
-
-  /* ===============================
-     AUTO INIT
-  =============================== */
-
-  /* =====================================================
-   TRACKING SERVICE MODULE (CLEAN VERSION)
-===================================================== */
-
-(function(){
-
-  /* ===============================
-     MOCK DATABASE
-  =============================== */
-
-  const mockDatabase = {
-    "ABC123": { status: "In Transit" },
-    "XYZ789": { status: "Delivered" },
-    "TEST001": { status: "Processing" }
-  };
-
-  /* ===============================
-     CORE LOGIC (SINGLE SOURCE 🔥)
-  =============================== */
-
-  async function trackPackage(trackingNumber){
-
-    await new Promise(r => setTimeout(r, 1000));
-
-    const data = mockDatabase[trackingNumber];
-
-    if(data){
-      return {
-        trackingNumber,
-        status: data.status,
-        found: true
-      };
-    }
-
-    return {
-      trackingNumber,
-      found: false
-    };
-  }
-
-  /* ===============================
-     UI HANDLER (EXTERNAL PAGE)
-  =============================== */
-
-  function initUI(){
-
-    const input = document.getElementById("trackingId");
-    const btn = document.getElementById("trackBtn");
-    const result = document.getElementById("result");
-
-    if(!input || !btn || !result) return;
-
-    btn.onclick = async ()=>{
-
-      const value = input.value.trim();
-
-      if(!value){
-        result.innerText = "Enter a tracking ID";
-        return;
-      }
-
-      result.innerText = "Tracking...";
-
-      const res = await trackPackage(value);
-
-      if(res.found){
-        result.innerText =
-`Tracking #: ${res.trackingNumber}
-Status: ${res.status}`;
-      } else {
-        result.innerText = "Shipment not found";
-      }
-
-    };
-
-  }
-
-  /* ===============================
-     PLUGIN REGISTRATION (FIXED 🔥)
-  =============================== */
-
-  function registerPlugin(){
-
-    if(!window.Creativia) return;
-
-    Creativia.registerPlugin({
-
-      name: "tracking",
-
-      modules: {
-
-        tracking: {
-          track: trackPackage
-        }
-
-      }
-
-    });
-
-  }
-
-  /* ===============================
-     AUTO INIT
-  =============================== */
-
-  function waitForDOMAndInit(){
-
-  let tries = 0;
-
-  const interval = setInterval(()=>{
-
-    const input = document.getElementById("trackingId");
-    const btn = document.getElementById("trackBtn");
-    const result = document.getElementById("result");
-
-    if(input && btn && result){
-
-      clearInterval(interval);
-      initUI(); // 🔥 run safely when DOM exists
-
-    }
-
-    // stop after ~5 seconds
-    if(tries++ > 50){
-      clearInterval(interval);
-      console.warn("Tracking UI not found");
-    }
-
-  }, 100);
-
-}
-
-/* AUTO INIT */
-waitForDOMAndInit();
 
   registerPlugin();
+  waitForElementsAndInit(); // fallback if event missed
 
 })();
-
-
