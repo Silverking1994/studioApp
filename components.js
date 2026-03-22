@@ -4,16 +4,20 @@
 
 window.Creativia = window.Creativia || {};
 
-Creativia.components = {};
+/* ===============================
+   SAFE GETTERS (CRITICAL)
+=============================== */
 
-/* REGISTER COMPONENT */
-Creativia.registerComponent = function(name, fn){
-  this.components[name] = fn;
+Creativia.getComponent = function(name){
+  return this.components?.[name] || null;
 };
 
-/* GET COMPONENT */
-Creativia.getComponent = function(name){
-  return this.components[name];
+Creativia.getSection = function(name){
+  return this.sections?.[name] || null;
+};
+
+Creativia.getModule = function(name){
+  return this.modules?.[name] || null;
 };
 
 
