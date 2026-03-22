@@ -1,13 +1,8 @@
-/* =====================================================
-   TRACKING SERVICE MODULE (FINAL CLEAN VERSION)
-===================================================== */
-
 (function(){
 
   /* ===============================
      MOCK DATABASE
   =============================== */
-
   const mockDatabase = {
     "ABC123": { status: "In Transit" },
     "XYZ789": { status: "Delivered" },
@@ -15,9 +10,8 @@
   };
 
   /* ===============================
-     CORE LOGIC (SINGLE SOURCE 🔥)
+     TRACK FUNCTION
   =============================== */
-
   async function trackPackage(trackingNumber){
 
     await new Promise(r => setTimeout(r, 1000));
@@ -39,23 +33,17 @@
   }
 
   /* ===============================
-     UI HANDLER
+     INIT UI (MAIN FIX 🔥)
   =============================== */
-
   function initUI(){
 
     const input  = document.getElementById("trackingId");
     const btn    = document.getElementById("trackBtn");
     const result = document.getElementById("result");
 
-    // ❌ Stop if elements not present
     if(!input || !btn || !result) return;
 
-    // 🔥 Prevent duplicate binding
-    if(btn.dataset.bound === "true") return;
-    btn.dataset.bound = "true";
-
-    btn.addEventListener("click", async ()=>{
+    btn.onclick = async () => {
 
       const value = input.value.trim();
 
@@ -66,95 +54,25 @@
 
       result.innerText = "Tracking...";
 
-      try{
+      const res = await trackPackage(value);
 
-        const res = await trackPackage(value);
-
-        if(res.found){
-          result.innerText =
+      if(res.found){
+        result.innerText =
 `Tracking #: ${res.trackingNumber}
 Status: ${res.status}`;
-        } else {
-          result.innerText = "Shipment not found";
-        }
-
-      }catch(err){
-        console.error("Tracking error:", err);
-        result.innerText = "Error tracking package";
+      } else {
+        result.innerText = "Shipment not found";
       }
 
-    });
+    };
 
   }
 
   /* ===============================
-     SAFE AUTO INIT (FOR DYNAMIC LOAD)
+     🔥 RUN WHEN PAGE LOADS (FIX)
   =============================== */
 
-  function waitForElementsAndInit(){
-
-    let attempts = 0;
-
-    const interval = setInterval(()=>{
-
-      const input  = document.getElementById("trackingId");
-      const btn    = document.getElementById("trackBtn");
-      const result = document.getElementById("result");
-
-      if(input && btn && result){
-        clearInterval(interval);
-        initUI();
-      }
-
-      // stop trying after ~5 seconds
-      if(attempts++ > 50){
-        clearInterval(interval);
-        console.warn("Tracking UI not found in DOM");
-      }
-
-    }, 100);
-
-  }
-
-  /* ===============================
-     EVENT-BASED INIT (BEST PRACTICE)
-  =============================== */
-
-  window.addEventListener("external:pageReady", (e)=>{
-
-    if(e.detail?.page === "trackingService"){
-      initUI();
-    }
-
-  });
-
-  /* ===============================
-     PLUGIN REGISTRATION (CREATIVIA)
-  =============================== */
-
-  function registerPlugin(){
-
-    if(!window.Creativia) return;
-
-    Creativia.registerPlugin({
-
-      name: "trackingService",
-
-      modules: {
-        tracking: {
-          track: trackPackage
-        }
-      }
-
-    });
-
-  }
-
-  /* ===============================
-     INIT SEQUENCE
-  =============================== */
-
-  registerPlugin();
-  waitForElementsAndInit(); // fallback if event missed
+  // THIS replaces DOMContentLoaded
+  setTimeout(initUI, 100);
 
 })();
