@@ -361,6 +361,19 @@ Creativia.registerSection("cardsGrid", (section)=>{
 Creativia.registerSection("media", (section)=>{
 
   const id = section.id || `media-${Math.random().toString(36).slice(2,6)}`;
+   
+const controlsEnabled = section.controls !== false;
+
+const showSearch =
+typeof section.controls === "object"
+? section.controls.showSearch ?? true
+: true;
+
+const showFilters =
+typeof section.controls === "object"
+? section.controls.showFilters ?? true
+: true;
+   
 
   return `
     <div class="media-section">
