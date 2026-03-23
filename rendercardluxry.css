@@ -1,0 +1,165 @@
+
+/* 3D Scene */
+.scene{
+  perspective:1400px;
+}
+
+.card{
+  width:420px;
+  height:250px;
+  border-radius:24px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .2s ease;
+  padding:30px;
+  backdrop-filter:blur(20px);
+  background:linear-gradient(145deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.02)
+  );
+  border:1px solid rgba(0,255,255,0.3);
+  box-shadow:
+      0 0 40px rgba(0,255,255,0.25),
+      inset 0 0 20px rgba(255,255,255,0.05);
+  overflow:hidden;
+}
+
+/* Animated glow border */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:24px;
+  padding:2px;
+  background:linear-gradient(90deg,#00f7ff,#8b5cf6,#00f7ff);
+  background-size:300% 300%;
+  animation:borderMove 6s linear infinite;
+  -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+}
+
+@keyframes borderMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* Scan line activation */
+.scan-line{
+  position:absolute;
+  top:-100%;
+  left:0;
+  width:100%;
+  height:40%;
+  background:linear-gradient(to bottom,
+      transparent,
+      rgba(0,255,255,0.4),
+      transparent);
+  animation:scan 4s linear infinite;
+}
+
+@keyframes scan{
+  0%{top:-100%;}
+  100%{top:200%;}
+}
+
+.brand{
+  font-family:'Orbitron',sans-serif;
+  color:#00f7ff;
+  letter-spacing:2px;
+  font-size:16px;
+}
+
+.title{
+  margin-top:10px;
+  font-size:22px;
+  font-weight:600;
+  color:white;
+}
+
+.code{
+  margin-top:25px;
+  padding:12px;
+  background:rgba(0,0,0,0.5);
+  border-radius:12px;
+  border:1px solid rgba(0,255,255,0.5);
+  font-family:'Orbitron',sans-serif;
+  text-align:center;
+  letter-spacing:4px;
+  font-size:18px;
+  color:#00f7ff;
+  text-shadow:0 0 12px #00f7ff;
+}
+
+/* QR hologram */
+.qr{
+  position:absolute;
+  right:30px;
+  bottom:10px;
+  width:70px;
+  height:70px;
+  background:
+      repeating-linear-gradient(0deg,#00f7ff 0 2px,transparent 2px 6px),
+      repeating-linear-gradient(90deg,#00f7ff 0 2px,transparent 2px 6px);
+  opacity:0.6;
+  animation:qrPulse 3s ease-in-out infinite;
+}
+
+@keyframes qrPulse{
+  0%,100%{transform:scale(1);opacity:.5;}
+  50%{transform:scale(1.1);opacity:1;}
+}
+
+/* Fingerprint unlock */
+.fingerprint{
+  position:absolute;
+  left:30px;
+  bottom:25px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:2px solid rgba(0,255,255,0.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.fingerprint::before{
+  content:"";
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:2px solid rgba(0,255,255,0.6);
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);opacity:1;}
+  100%{transform:scale(1.8);opacity:0;}
+}
+
+.fingerprint.unlocked{
+  box-shadow:0 0 20px #00ffcc;
+  border-color:#00ffcc;
+}
+
+/* Printable metallic mode */
+@media print{
+  body{
+    background:white;
+  }
+  .card{
+    background:linear-gradient(145deg,#c9c9c9,#8e8e8e);
+    color:black;
+    border:2px solid black;
+    box-shadow:none;
+  }
+  .scan-line,.qr,.fingerprint{
+    display:none;
+  }
+}
