@@ -343,7 +343,7 @@ Creativia.registerSection("controls", (section)=>{
 /* ===============================
    CARDS GRID
 =============================== */
-Creativia.registerSection("cardsGrid", (section)=>{
+Creativia.registerSection("cards", (section)=>{
 
   const id = section.id || `grid-${Math.random().toString(36).slice(2,6)}`;
 
@@ -358,6 +358,7 @@ Creativia.registerSection("cardsGrid", (section)=>{
 /* ===============================
    MEDIA
 =============================== */
+
 Creativia.registerSection("media", (section)=>{
 
   const sectionId = section.id || `media-${Math.random().toString(36).substr(2,6)}`;
@@ -374,39 +375,102 @@ Creativia.registerSection("media", (section)=>{
       ? section.controls.showFilters ?? true
       : true;
 
-  return `
-  <div class="media-section" id="${sectionId}">
+  return {
+    html: `
+      <div class="media-section" id="${sectionId}">
 
-    ${controlsEnabled ? `
-    <div class="media-controls grid">
+        ${controlsEnabled ? `
+        <div class="media-controls grid">
 
-      ${showSearch ? `
-      <div class="search-box">
-        <input 
-          type="text" 
-          id="mediaSearch-${sectionId}" 
-          placeholder="Search media...">
-      </div>
-      ` : ""}
+          ${showSearch ? `
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="mediaSearch-${sectionId}" 
+              placeholder="Search media...">
+          </div>
+          ` : ""}
 
-      ${showFilters ? `
-      <div class="media-filters-wrapper horizontal-scroller">
-        <div class="filter-buttons" id="mediaFilters-${sectionId}">
-          ${(section.filters || []).map(f => `
-            <button class="filter-btn ${f === "All" ? "active" : ""}">
-              ${f}
-            </button>
-          `).join("")}
+          ${showFilters ? `
+          <div class="media-filters-wrapper horizontal-scroller">
+            <div class="filter-buttons" id="mediaFilters-${sectionId}">
+              ${(section.filters || []).map(f => `
+                <button class="filter-btn ${f === "All" ? "active" : ""}">
+                  ${f}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+          ` : ""}
+
         </div>
+        ` : ""}
+
+        <div class="media-grid" id="mediaGrid-${sectionId}"></div>
+
       </div>
-      ` : ""}
+    `,
 
-    </div>
-    ` : ""}
+    init: ()=>{
 
-    <div class="media-grid" id="mediaGrid-${sectionId}"></div>
+      const grid = document.getElementById(`mediaGrid-${sectionId}`);
+      const searchInput = document.getElementById(`mediaSearch-${sectionId}`);
+      const filtersWrap = document.getElementById(`mediaFilters-${sectionId}`);
 
-  </div>
-  `;
+      let activeFilter = "All";
+      let query = "";
+
+      const items = section.items || [];
+
+      function renderGrid(){
+
+        if(!grid) return;
+
+        const filtered = items.filter(item => {
+
+          const matchFilter =
+            activeFilter === "All" || item.type === activeFilter;
+
+          const matchSearch =
+            !query || item.title?.toLowerCase().includes(query);
+
+          return matchFilter && matchSearch;
+        });
+
+        grid.innerHTML = filtered.map(item => `
+          <div class="media-card">
+            <img src="${item.image}">
+            <div class="media-title">${item.title || ""}</div>
+          </div>
+        `).join("");
+      }
+
+      /* 🔍 SEARCH */
+      searchInput?.addEventListener("input", (e)=>{
+        query = e.target.value.toLowerCase();
+        renderGrid();
+      });
+
+      /* 🎛 FILTERS */
+      filtersWrap?.addEventListener("click", (e)=>{
+
+        const btn = e.target.closest(".filter-btn");
+        if(!btn) return;
+
+        activeFilter = btn.textContent.trim();
+
+        // update UI
+        filtersWrap.querySelectorAll(".filter-btn")
+          .forEach(b => b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        renderGrid();
+      });
+
+      // initial render
+      renderGrid();
+    }
+  };
+
 });
-
