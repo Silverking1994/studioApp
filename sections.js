@@ -107,7 +107,7 @@ Creativia.registerSection("profilePhoto", ()=>{
 /* ===============================
    HERO (ADVANCED)
 =============================== */
-Creativia.registerSection("heroRow", (section)=>{
+Creativia.registerSection("hero", (section)=>{
 
   return `
     <div class="hero-row card">
@@ -360,41 +360,53 @@ Creativia.registerSection("cardsGrid", (section)=>{
 =============================== */
 Creativia.registerSection("media", (section)=>{
 
-  const id = section.id || `media-${Math.random().toString(36).slice(2,6)}`;
-   
-const controlsEnabled = section.controls !== false;
+  const sectionId = section.id || `media-${Math.random().toString(36).substr(2,6)}`;
 
-const showSearch =
-typeof section.controls === "object"
-? section.controls.showSearch ?? true
-: true;
+  const controlsEnabled = section.controls !== false;
 
-const showFilters =
-typeof section.controls === "object"
-? section.controls.showFilters ?? true
-: true;
-   
+  const showSearch =
+    typeof section.controls === "object"
+      ? section.controls.showSearch ?? true
+      : true;
+
+  const showFilters =
+    typeof section.controls === "object"
+      ? section.controls.showFilters ?? true
+      : true;
 
   return `
-    <div class="media-section">
+  <div class="media-section" id="${sectionId}">
 
-      <div class="media-controls grid">
+    ${controlsEnabled ? `
+    <div class="media-controls grid">
 
-        <div class="search-box">
-          <input type="text" placeholder="Search media...">
-        </div>
+      ${showSearch ? `
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="mediaSearch-${sectionId}" 
+          placeholder="Search media...">
+      </div>
+      ` : ""}
 
-        <div class="filter-buttons">
-          ${(section.filters || []).map(f=>`
-            <button class="filter-btn">${f}</button>
+      ${showFilters ? `
+      <div class="media-filters-wrapper horizontal-scroller">
+        <div class="filter-buttons" id="mediaFilters-${sectionId}">
+          ${(section.filters || []).map(f => `
+            <button class="filter-btn ${f === "All" ? "active" : ""}">
+              ${f}
+            </button>
           `).join("")}
         </div>
-
       </div>
-
-      <div class="media-grid" id="mediaGrid-${id}"></div>
+      ` : ""}
 
     </div>
+    ` : ""}
+
+    <div class="media-grid" id="mediaGrid-${sectionId}"></div>
+
+  </div>
   `;
 });
 
