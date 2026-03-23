@@ -1,4 +1,3 @@
-
 window.Creativia = window.Creativia || {};
 Creativia.sections = Creativia.sections || {};
 
@@ -10,7 +9,7 @@ Creativia.registerSection = function(name, fn){
 };
 
 /* ===============================
-   HELPERS (IMPORTANT)
+   HELPERS
 =============================== */
 const getMember = () => window.memberData || {};
 const safe = (v, fallback="") => v ?? fallback;
@@ -32,7 +31,6 @@ Creativia.registerSection("headStat", (section)=>{
   `;
 });
 
-
 /* ===============================
    PROFILE INFO
 =============================== */
@@ -42,13 +40,11 @@ Creativia.registerSection("profileInfo", ()=>{
 
   return `
   <div class="profile-info card">
-
     <div class="profile-bio">
       ${safe(member.bio, "Creative thinker building the future.")}
     </div>
 
     <div class="profile-stats">
-
       <div class="profile-stat">
         <strong>${safe(member.followers, 0)}</strong>
         <span>Followers</span>
@@ -63,11 +59,9 @@ Creativia.registerSection("profileInfo", ()=>{
         <strong>${safe(member.posts, 0)}</strong>
         <span>Posts</span>
       </div>
-
     </div>
 
     <div class="profile-actions">
-
       <button class="primary-btn" onclick="handleAction('messageUser')">
         <i class="fas fa-envelope"></i> Message
       </button>
@@ -75,13 +69,10 @@ Creativia.registerSection("profileInfo", ()=>{
       <button class="secondary-btn" onclick="handleAction('connectUser')">
         <i class="fas fa-user-plus"></i> Connect
       </button>
-
     </div>
-
   </div>
   `;
 });
-
 
 /* ===============================
    PROFILE PHOTO
@@ -97,15 +88,13 @@ Creativia.registerSection("profilePhoto", ()=>{
         member.profilePhoto ||
         "https://i.pravatar.cc/300"
       }">
-
       <div class="online-dot"></div>
     </div>
   `;
 });
 
-
 /* ===============================
-   HERO (ADVANCED)
+   HERO
 =============================== */
 Creativia.registerSection("hero", (section)=>{
 
@@ -125,7 +114,6 @@ Creativia.registerSection("hero", (section)=>{
   `;
 });
 
-
 /* ===============================
    CAROUSEL
 =============================== */
@@ -143,7 +131,6 @@ Creativia.registerSection("carousel", (section)=>{
   `;
 });
 
-
 /* ===============================
    DISCOVER
 =============================== */
@@ -160,7 +147,6 @@ Creativia.registerSection("discover", (section)=>{
     </div>
   `;
 });
-
 
 /* ===============================
    POSTS
@@ -182,7 +168,6 @@ Creativia.registerSection("posts", (section)=>{
   `;
 });
 
-
 /* ===============================
    STATS (WITH COUNTER)
 =============================== */
@@ -190,51 +175,55 @@ Creativia.registerSection("stats", (section)=>{
 
   if(!section.stats?.length) return "";
 
-  return `
-    <div class="grid grid-card">
+  return {
+    html: `
+      <div class="grid grid-card">
 
-      ${section.stats.slice(0,3).map(stat=>{
+        ${section.stats.slice(0,3).map(stat=>{
 
-        const str = String(stat.value);
-        const match = str.match(/[\d,.]+/);
+          const str = String(stat.value);
+          const match = str.match(/[\d,.]+/);
 
-        let numericValue = NaN;
-        let prefix = "";
-        let suffix = "";
+          let numericValue = NaN;
+          let prefix = "";
+          let suffix = "";
 
-        if(match){
-          numericValue = parseFloat(match[0].replace(/,/g,""));
-          prefix = str.slice(0,match.index);
-          suffix = str.slice(match.index + match[0].length);
-        }
+          if(match){
+            numericValue = parseFloat(match[0].replace(/,/g,""));
+            prefix = str.slice(0,match.index);
+            suffix = str.slice(match.index + match[0].length);
+          }
 
-        return `
-          <div class="stat" id="${stat.id}">
+          return `
+            <div class="stat" id="${stat.id}">
 
-            ${t(stat.label)}
+              ${t(stat.label)}
 
-            <div class="highlight ${!isNaN(numericValue) ? "counter":""}"
-
-              ${!isNaN(numericValue)
-                ? `data-target="${numericValue}" data-prefix="${prefix}" data-suffix="${suffix}"`
-                : ""}>
-
-              ${stat.value}
+              <div class="highlight ${!isNaN(numericValue) ? "counter":""}"
+                ${!isNaN(numericValue)
+                  ? `data-target="${numericValue}" data-prefix="${prefix}" data-suffix="${suffix}"`
+                  : ""}>
+                ${stat.value}
+              </div>
 
             </div>
+          `;
 
-          </div>
-        `;
+        }).join("")}
 
-      }).join("")}
+      </div>
+    `,
+    init: ()=>{
+      if(typeof animateCounters === "function"){
+        animateCounters();
+      }
+    }
+  };
 
-    </div>
-  `;
 });
 
-
 /* ===============================
-   DETAILS (EDITABLE)
+   DETAILS
 =============================== */
 Creativia.registerSection("details", (section)=>{
 
@@ -244,7 +233,6 @@ Creativia.registerSection("details", (section)=>{
 
   return `
     <div class="card details-section">
-
       <div class="title">${t("accountDetails")}</div>
 
       ${section.details.map(d => {
@@ -263,7 +251,6 @@ Creativia.registerSection("details", (section)=>{
                         onchange="updateMemberDetail(this)">`
               : `<span>${value}</span>`
             }
-
           </div>
         `;
 
@@ -272,7 +259,6 @@ Creativia.registerSection("details", (section)=>{
     </div>
   `;
 });
-
 
 /* ===============================
    ACTIONS
@@ -283,11 +269,9 @@ Creativia.registerSection("actions", (section)=>{
 
   return `
     <div class="card">
-
       <div class="title">Actions</div>
 
       <div class="action-grid">
-
         ${section.actions.map(a => `
           <button
             class="action-btn ${a.type || ""}"
@@ -295,16 +279,12 @@ Creativia.registerSection("actions", (section)=>{
 
             ${a.icon ? `<span class="icon">${a.icon}</span>` : ""}
             <span>${t(a.label)}</span>
-
           </button>
         `).join("")}
-
       </div>
-
     </div>
   `;
 });
-
 
 /* ===============================
    CHART
@@ -313,52 +293,63 @@ Creativia.registerSection("chart", (section)=>{
 
   const id = section.id || "pageChart";
 
-  return `
-    <div class="card chart-section">
-      <canvas id="${id}" height="120"></canvas>
-    </div>
-  `;
-});
+  return {
+    html: `
+      <div class="card chart-section">
+        <canvas id="${id}" height="120"></canvas>
+      </div>
+    `,
+    init: ()=>{
+      renderChart(section);
+    }
+  };
 
+});
 
 /* ===============================
    CONTROLS
 =============================== */
 Creativia.registerSection("controls", (section)=>{
 
-  return `
-    <div class="controls grid">
-
-      <div class="search-box">
-        <input type="text" placeholder="${section.placeholder || "Search..."}">
+  return {
+    html: `
+      <div class="controls grid">
+        <div class="search-box">
+          <input type="text" placeholder="${section.placeholder || "Search..."}">
+        </div>
+        <div class="filters"></div>
       </div>
+    `,
+    init: ()=>{
+      handleControls(section);
+    }
+  };
 
-      <div class="filters"></div>
-
-    </div>
-  `;
 });
 
-
 /* ===============================
-   CARDS GRID
+   CARDS
 =============================== */
 Creativia.registerSection("cards", (section)=>{
 
   const id = section.id || `grid-${Math.random().toString(36).slice(2,6)}`;
 
-  return `
-    <div class="cards-container">
-      <div class="grid" id="${id}"></div>
-    </div>
-  `;
-});
+  return {
+    html: `
+      <div class="cards-container">
+        <div class="grid" id="${id}"></div>
+      </div>
+    `,
+    init: ()=>{
+      renderCards(id, section.items || []);
+    }
+  };
 
+});
 
 /* ===============================
    MEDIA
 =============================== */
-
 Creativia.registerSection("media", (section)=>{
 
   const sectionId = section.id || `media-${Math.random().toString(36).substr(2,6)}`;
@@ -429,7 +420,8 @@ Creativia.registerSection("media", (section)=>{
         const filtered = items.filter(item => {
 
           const matchFilter =
-            activeFilter === "All" || item.type === activeFilter;
+            activeFilter === "All" ||
+            (item.type || "").toLowerCase() === activeFilter.toLowerCase();
 
           const matchSearch =
             !query || item.title?.toLowerCase().includes(query);
@@ -445,21 +437,17 @@ Creativia.registerSection("media", (section)=>{
         `).join("");
       }
 
-      /* 🔍 SEARCH */
       searchInput?.addEventListener("input", (e)=>{
         query = e.target.value.toLowerCase();
         renderGrid();
       });
 
-      /* 🎛 FILTERS */
       filtersWrap?.addEventListener("click", (e)=>{
-
         const btn = e.target.closest(".filter-btn");
         if(!btn) return;
 
         activeFilter = btn.textContent.trim();
 
-        // update UI
         filtersWrap.querySelectorAll(".filter-btn")
           .forEach(b => b.classList.remove("active"));
 
@@ -468,7 +456,6 @@ Creativia.registerSection("media", (section)=>{
         renderGrid();
       });
 
-      // initial render
       renderGrid();
     }
   };
