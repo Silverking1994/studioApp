@@ -125,7 +125,8 @@
       width:100%;
       z-index:999;
       transition:var(--transition);
-      padding:18px 0;
+        height:45px;
+      padding:5px 0;
     }
 
     .navbar.scrolled{
