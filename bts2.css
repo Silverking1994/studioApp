@@ -148,34 +148,6 @@
       pointer-events:none;
     }
 
-    /* CURSOR */
-    .cursor{
-      position:fixed;
-      width:22px;
-      height:22px;
-      border-radius:50%;
-      pointer-events:none;
-      z-index:99999;
-      background:radial-gradient(circle, rgba(236,72,153,.8), rgba(168,85,247,.4), transparent 70%);
-      box-shadow:0 0 40px rgba(168,85,247,.8);
-      transform:translate(-50%, -50%);
-      mix-blend-mode:screen;
-      transition:transform .08s linear;
-    }
-
-    .cursor-follower{
-      position:fixed;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      pointer-events:none;
-      z-index:99998;
-      background:radial-gradient(circle, rgba(168,85,247,.18), rgba(236,72,153,.10), transparent 70%);
-      filter:blur(10px);
-      transform:translate(-50%, -50%);
-      transition:transform .16s linear;
-    }
-
     /* LOADER */
     #loader{
       position:fixed;
