@@ -40,13 +40,11 @@
       color:var(--text);
       overflow-x:hidden;
       min-height:100vh;
-      cursor:none;
     }
 
     body.loaded #loader{
       opacity:0;
       visibility:hidden;
-      pointer-events:none;
     }
 
     img{
