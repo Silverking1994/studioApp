@@ -1619,15 +1619,8 @@
     }
 
     @media (max-width: 860px){
-      body{
-        cursor:auto;
-      }
+  
 
-      .cursor,
-      .cursor-follower,
-      .lightstick-wrap{
-        display:none;
-      }
 
       .nav-links,
       .nav-cta .btn{
